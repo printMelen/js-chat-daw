@@ -11,7 +11,8 @@ const div = document.querySelector("main>div");
 const main = document.querySelector("main");
 const boton = document.querySelector("#enviar");
 const error = document.createElement("p");
-
+let respuesta;
+let mensajes;
 div.style.display = "none";
 
 openLogin(main, callback);
@@ -35,16 +36,18 @@ function callback() {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 // Manejar la respuesta del servidor
                 console.log(xhr.responseText);
-                let respuesta;
                 try {
                     respuesta = JSON.parse(xhr.responseText);
                     console.log(respuesta);
+                    console.log(respuesta[0].apiKey);
                 } catch (error) {
                     console.error("Error al parsear la respuesta JSON:", error);
                 }
                 if (respuesta[0].apiKey != "") {
                     closeLogin(section);
                     div.style.display = "inline";
+                    f();
+
                 } else {
                     error.textContent = "Datos incorrectos";
                 }
@@ -52,5 +55,20 @@ function callback() {
         };
         xhr.send(formData);
     }
+}
+
+function f() {
+    xhr.open("GET", "https://handmadegames.es/chat/API/v1/chat/list?apiKey="+respuesta[0].apiKey, true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            try {
+                mensajes = JSON.parse(xhr.responseText);
+            } catch (error) {
+                console.error("Error al parsear la respuesta JSON:", error);
+            }
+            console.log(mensajes);
+        }  
+    }
+    xhr.send();
 }
 // closeLogin();

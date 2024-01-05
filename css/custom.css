@@ -1,0 +1,33 @@
+body {
+    background: white;   
+}
+
+header {
+    padding: 5px;
+    text-align: center;
+    color: rgb(0, 0, 0);
+    font-size: 22px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 100;
+}
+
+main {
+    margin: 30px 0;
+}
+
+legend{
+  text-transform:uppercase;
+  margin:1em;
+}
+fieldset{margin-bottom:1em;}
+
+
+
+
+
+
+
+
+
+
+ 

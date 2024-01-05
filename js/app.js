@@ -10,9 +10,13 @@ import {
 const div = document.querySelector("main>div");
 const main = document.querySelector("main");
 const boton = document.querySelector("#enviar");
+const listaCont = document.querySelector("#lista");
 const error = document.createElement("p");
 let respuesta;
 let mensajes;
+let container;
+let containerMensaje;
+let parrafos;
 div.style.display = "none";
 
 openLogin(main, callback);
@@ -67,8 +71,30 @@ function f() {
                 console.error("Error al parsear la respuesta JSON:", error);
             }
             console.log(mensajes);
+            mensajes.forEach(mensaje => {
+                dibujarMensaje(mensaje);
+            });
         }  
     }
     xhr.send();
+}
+function dibujarMensaje(mensaje) {
+    const estructura=document.createElement("div");
+    estructura.innerHTML = `
+        <div>
+            <p>${mensaje.nombre}</p>
+            <p>${mensaje.mensaje}</p>
+            <p>${mensaje.hora+" "+mensaje.fecha}</p>
+        </div>
+    `;
+    listaCont.appendChild(estructura);
+    containerMensaje = estructura.querySelector("div");
+    parrafos = estructura.querySelectorAll("div>p");
+    contenedor(estructura,mensaje.escrito);
+    entrada(containerMensaje,mensaje.escrito);
+    nombre(parrafos[0]);
+    texto(parrafos[1]);
+    fecha(parrafos[2]);
+
 }
 // closeLogin();

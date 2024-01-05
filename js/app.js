@@ -1,4 +1,11 @@
 import { openLogin, closeLogin } from "/js/login.js";
+import {
+    contenedor,
+    entrada,
+    nombre,
+    texto,
+    fecha
+} from "/js/estilos.js";
 
 const div = document.querySelector("main>div");
 const main = document.querySelector("main");

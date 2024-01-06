@@ -70,10 +70,9 @@ function f() {
             } catch (error) {
                 console.error("Error al parsear la respuesta JSON:", error);
             }
-            console.log(mensajes);
-            mensajes.forEach(mensaje => {
-                dibujarMensaje(mensaje);
-            });
+            for (let i = mensajes.length-1; i > 0; i--) {
+                dibujarMensaje(mensajes[i]);
+            }
         }  
     }
     xhr.send();

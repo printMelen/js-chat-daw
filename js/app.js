@@ -76,6 +76,7 @@ function f() {
         }  
     }
     xhr.send();
+    setTimeout(f, 2000);
 }
 function dibujarMensaje(mensaje) {
     const estructura=document.createElement("div");

@@ -16,13 +16,14 @@ const inputTexto=document.querySelector("#texto");
 const boton = document.querySelector("#enviar");
 let respuesta;
 let mensajes;
+let mensajesAnt;
 let container;
 let containerMensaje;
 let parrafos;
 div.style.display = "none";
 
 openLogin(main, callback);
-var xhr = new XMLHttpRequest();
+let xhr = new XMLHttpRequest();
 const section = document.querySelector("section");
 const formularioLogin = document.querySelector("section>form");
 const inputNombre = document.querySelector('[name="user"]');
@@ -31,6 +32,7 @@ const inputContrasenia = document.querySelector('[name="pass"]');
 boton.addEventListener("click", enviarMensaje);
 formularioLogin.addEventListener("submit", callback);
 formularioLogin.appendChild(error);
+
 function callback() {
     if (inputNombre.value.trim() != "" && inputContrasenia.value.trim() != "") {
         const formData = new FormData();
@@ -54,7 +56,6 @@ function callback() {
                     closeLogin(section);
                     div.style.display = "inline";
                     f();
-
                 } else {
                     error.textContent = "Datos incorrectos";
                 }
@@ -69,18 +70,19 @@ function f() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             try {
-                if (xhr.responseText!="") {
-                    
-                    mensajes = JSON.parse(xhr.responseText);
-                }
-                mensajes=xhr.responseText;
-                console.log(mensajes);
+                mensajes = JSON.parse(xhr.responseText);
+                // mensajes=xhr.responseText;
+                // console.log(mensajes);
             } catch (error) {
                 console.error("Error al parsear la respuesta JSON:", error);
             }
             for (let i = mensajes.length-1; i > 0; i--) {
-                dibujarMensaje(mensajes[i]);
+                // console.log(mensajes[i].nombre);
+                if (mensajes.length!=mensajesAnt) {
+                    dibujarMensaje(mensajes[i]);
+                }
             }
+            mensajesAnt=mensajes.length;
         }  
     }
     xhr.send();
@@ -107,7 +109,6 @@ function dibujarMensaje(mensaje) {
 }
 function enviarMensaje(){
     if (inputTexto.value.length<=256&&inputTexto.value!="") {
-        console.log("🐐");
         let fecha = new Date(Date.now());
         let hora= fecha.getHours();
         let minutos= fecha.getMinutes();
@@ -121,15 +122,14 @@ function enviarMensaje(){
             fecha: dia+"/"+ (mes+1) +"/"+ano,
             apiKey: respuesta[0].apiKey
         }
+
         const cadenaJSON= JSON.stringify(mensajeSend);
         console.log(cadenaJSON);
-        const formData = new FormData();
-        formData.append("text",cadenaJSON);
-        xhr.open("PUT", "https://handmadegames.es/chat/API/v1/chat/insert", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
+        
+        
         xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-              if (xhr.status === 200) {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 201) {
                 // La solicitud fue exitosa
                 console.log("Solicitud PUT exitosa");
               } else {
@@ -138,7 +138,15 @@ function enviarMensaje(){
               }
             }
           };
+
+        xhr.onerror = () => {
+            console.error('Error en la red');
+        };
+        
+        xhr.open("PUT", "https://handmadegames.es/chat/API/v1/chat/insert", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(cadenaJSON);
     }
 }
+
 // closeLogin();

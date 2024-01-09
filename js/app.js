@@ -113,13 +113,25 @@ function enviarMensaje(){
         let hora= fecha.getHours();
         let minutos= fecha.getMinutes();
         let dia= fecha.getDate();
-        let mes= fecha.getMonth();
+        let mes= fecha.getMonth()+1;
         let ano= fecha.getFullYear();
-        
+        if (dia<10) {
+            dia="0"+dia;
+        }
+        if (mes<10) {
+            mes="0"+mes;
+        }
+        if (hora<10) {
+            hora="0"+hora;
+        }
+        if (minutos<10) {
+            minutos="0"+minutos;
+        }
+
         const mensajeSend={
             mensaje: inputTexto.value.trim(),
             hora: hora+":"+minutos,
-            fecha: dia+"/"+ (mes+1) +"/"+ano,
+            fecha: dia+"/"+ mes +"/"+ano,
             apiKey: respuesta[0].apiKey
         }
 

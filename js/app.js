@@ -111,13 +111,17 @@ function dibujarMensaje(mensaje) {
 
 }
 function enviarMensaje(){
-    if (inputTexto.value.length<=256&&inputTexto.value!="") {
+    if (inputTexto.value!="") {
         let fecha = new Date(Date.now());
         let hora= fecha.getHours();
         let minutos= fecha.getMinutes();
         let dia= fecha.getDate();
         let mes= fecha.getMonth()+1;
         let ano= fecha.getFullYear();
+        const mensaje256 = inputTexto.value.trim().substring(0, 256);
+        if (inputTexto.value.trim()) {
+            
+        }
         if (dia<10) {
             dia="0"+dia;
         }
@@ -132,7 +136,7 @@ function enviarMensaje(){
         }
 
         const mensajeSend={
-            mensaje: inputTexto.value.trim(),
+            mensaje: mensaje256,
             hora: hora+":"+minutos,
             fecha: dia+"/"+ mes +"/"+ano,
             apiKey: respuesta[0].apiKey

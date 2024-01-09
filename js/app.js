@@ -76,11 +76,14 @@ function f() {
             } catch (error) {
                 console.error("Error al parsear la respuesta JSON:", error);
             }
+            while (listaCont.firstChild) {
+                listaCont.removeChild(listaCont.firstChild);
+            }
             for (let i = mensajes.length-1; i > 0; i--) {
                 // console.log(mensajes[i].nombre);
-                if (mensajes.length!=mensajesAnt) {
+                // if (mensajes.length!=mensajesAnt) {
                     dibujarMensaje(mensajes[i]);
-                }
+                // }
             }
             mensajesAnt=mensajes.length;
         }  
@@ -159,6 +162,7 @@ function enviarMensaje(){
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(cadenaJSON);
     }
+    inputTexto.value="";
 }
 
 // closeLogin();

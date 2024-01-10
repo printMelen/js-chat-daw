@@ -11,12 +11,13 @@ const div = document.querySelector("main>div");
 const main = document.querySelector("main");
 const listaCont = document.querySelector("#lista");
 const error = document.createElement("p");
+const errorLargo = document.createElement("p");
 const formulario = document.querySelector("main>div>form");
-const inputTexto=document.querySelector("#texto");
+const inputTexto = document.querySelector("#texto");
 const boton = document.querySelector("#enviar");
 let respuesta;
 let mensajes;
-let mensajesAnt;
+// let mensajesAnt;
 let container;
 let containerMensaje;
 let parrafos;
@@ -30,8 +31,25 @@ const inputNombre = document.querySelector('[name="user"]');
 const inputContrasenia = document.querySelector('[name="pass"]');
 
 boton.addEventListener("click", enviarMensaje);
+inputTexto.addEventListener('input', function () {
+    // Obtener el contenido del campo de texto
+    let texto = this.value;
+
+    // Verificar si supera los 256 caracteres
+    if (texto.length > 256) {
+        // Truncar el texto a 256 caracteres
+        this.value = texto.slice(0, 256);
+        console.log(this.value);
+        console.log("Texto muy largo");
+        errorLargo.textContent = "Texto muy largo";
+        setTimeout(function () {
+            errorLargo.textContent = "";
+        }, 3000);
+    }
+});
 formularioLogin.addEventListener("submit", callback);
 formularioLogin.appendChild(error);
+formulario.appendChild(errorLargo);
 
 function callback() {
     if (inputNombre.value.trim() != "" && inputContrasenia.value.trim() != "") {
@@ -66,107 +84,99 @@ function callback() {
 }
 
 function f() {
-    xhr.open("GET", "https://handmadegames.es/chat/API/v1/chat/list?apiKey="+respuesta[0].apiKey, true);
+    xhr.open("GET", "https://handmadegames.es/chat/API/v1/chat/list?apiKey=" + respuesta[0].apiKey, true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             try {
                 mensajes = JSON.parse(xhr.responseText);
-                // mensajes=xhr.responseText;
-                // console.log(mensajes);
             } catch (error) {
                 console.error("Error al parsear la respuesta JSON:", error);
             }
             while (listaCont.firstChild) {
                 listaCont.removeChild(listaCont.firstChild);
             }
-            for (let i = mensajes.length-1; i > 0; i--) {
-                // console.log(mensajes[i].nombre);
-                // if (mensajes.length!=mensajesAnt) {
-                    dibujarMensaje(mensajes[i]);
-                // }
+            for (let i = mensajes.length - 1; i > 0; i--) {
+                dibujarMensaje(mensajes[i]);
             }
-            mensajesAnt=mensajes.length;
-        }  
+        }
     }
     xhr.send();
     setTimeout(f, 2000);
 }
 function dibujarMensaje(mensaje) {
-    const estructura=document.createElement("div");
+    const estructura = document.createElement("div");
     estructura.innerHTML = `
         <div>
             <p>${mensaje.nombre}</p>
             <p>${mensaje.mensaje}</p>
-            <p>${mensaje.hora+" "+mensaje.fecha}</p>
+            <p>${mensaje.hora + " " + mensaje.fecha}</p>
         </div>
     `;
     listaCont.appendChild(estructura);
     containerMensaje = estructura.querySelector("div");
     parrafos = estructura.querySelectorAll("div>p");
-    contenedor(estructura,mensaje.escrito);
-    entrada(containerMensaje,mensaje.escrito);
+    contenedor(estructura, mensaje.escrito);
+    entrada(containerMensaje, mensaje.escrito);
     nombre(parrafos[0]);
     texto(parrafos[1]);
     fecha(parrafos[2]);
 
 }
-function enviarMensaje(){
-    if (inputTexto.value!="") {
+function enviarMensaje() {
+    if (inputTexto.value != "") {
         let fecha = new Date(Date.now());
-        let hora= fecha.getHours();
-        let minutos= fecha.getMinutes();
-        let dia= fecha.getDate();
-        let mes= fecha.getMonth()+1;
-        let ano= fecha.getFullYear();
+        let hora = fecha.getHours();
+        let minutos = fecha.getMinutes();
+        let dia = fecha.getDate();
+        let mes = fecha.getMonth() + 1;
+        let ano = fecha.getFullYear();
         const mensaje256 = inputTexto.value.trim().substring(0, 256);
         if (inputTexto.value.trim()) {
-            
+
         }
-        if (dia<10) {
-            dia="0"+dia;
+        if (dia < 10) {
+            dia = "0" + dia;
         }
-        if (mes<10) {
-            mes="0"+mes;
+        if (mes < 10) {
+            mes = "0" + mes;
         }
-        if (hora<10) {
-            hora="0"+hora;
+        if (hora < 10) {
+            hora = "0" + hora;
         }
-        if (minutos<10) {
-            minutos="0"+minutos;
+        if (minutos < 10) {
+            minutos = "0" + minutos;
         }
 
-        const mensajeSend={
+        const mensajeSend = {
             mensaje: mensaje256,
-            hora: hora+":"+minutos,
-            fecha: dia+"/"+ mes +"/"+ano,
+            hora: hora + ":" + minutos,
+            fecha: dia + "/" + mes + "/" + ano,
             apiKey: respuesta[0].apiKey
         }
 
-        const cadenaJSON= JSON.stringify(mensajeSend);
+        const cadenaJSON = JSON.stringify(mensajeSend);
         console.log(cadenaJSON);
-        
-        
+
+
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
-              if (xhr.status === 201) {
-                // La solicitud fue exitosa
-                console.log("Solicitud PUT exitosa");
-              } else {
-                // Hubo un error en la solicitud
-                console.error("Error en la solicitud PUT:", xhr.status);
-              }
+                if (xhr.status === 201) {
+                    // La solicitud fue exitosa
+                    console.log("Solicitud PUT exitosa");
+                } else {
+                    // Hubo un error en la solicitud
+                    console.error("Error en la solicitud PUT:", xhr.status);
+                }
             }
-          };
+        };
 
         xhr.onerror = () => {
             console.error('Error en la red');
         };
-        
+
         xhr.open("PUT", "https://handmadegames.es/chat/API/v1/chat/insert", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(cadenaJSON);
     }
-    inputTexto.value="";
+    inputTexto.value = "";
 }
-
-// closeLogin();

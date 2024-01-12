@@ -17,8 +17,6 @@ const inputTexto = document.querySelector("#texto");
 const boton = document.querySelector("#enviar");
 let respuesta;
 let mensajes;
-// let mensajesAnt;
-let container;
 let containerMensaje;
 let parrafos;
 div.style.display = "none";
@@ -39,8 +37,6 @@ inputTexto.addEventListener('input', function () {
     if (texto.length > 256) {
         // Truncar el texto a 256 caracteres
         this.value = texto.slice(0, 256);
-        console.log(this.value);
-        console.log("Texto muy largo");
         errorLargo.textContent = "Texto muy largo";
         setTimeout(function () {
             errorLargo.textContent = "";
@@ -62,11 +58,8 @@ function callback() {
             // Verificar si la solicitud se completó con éxito (estado 4) y si el código de estado es 200 (OK)
             if (xhr.readyState == 4 && xhr.status == 200) {
                 // Manejar la respuesta del servidor
-                console.log(xhr.responseText);
                 try {
                     respuesta = JSON.parse(xhr.responseText);
-                    console.log(respuesta);
-                    console.log(respuesta[0].apiKey);
                 } catch (error) {
                     console.error("Error al parsear la respuesta JSON:", error);
                 }
@@ -92,15 +85,18 @@ function f() {
             } catch (error) {
                 console.error("Error al parsear la respuesta JSON:", error);
             }
+            //borro los mensajes antes de imprimir
             while (listaCont.firstChild) {
                 listaCont.removeChild(listaCont.firstChild);
             }
+            //imprimo los mensajes
             for (let i = mensajes.length - 1; i > 0; i--) {
                 dibujarMensaje(mensajes[i]);
             }
         }
     }
     xhr.send();
+    //Hago recursiva la funcion
     setTimeout(f, 2000);
 }
 function dibujarMensaje(mensaje) {
@@ -130,10 +126,7 @@ function enviarMensaje() {
         let dia = fecha.getDate();
         let mes = fecha.getMonth() + 1;
         let ano = fecha.getFullYear();
-        const mensaje256 = inputTexto.value.trim().substring(0, 256);
-        if (inputTexto.value.trim()) {
 
-        }
         if (dia < 10) {
             dia = "0" + dia;
         }
@@ -148,14 +141,13 @@ function enviarMensaje() {
         }
 
         const mensajeSend = {
-            mensaje: mensaje256,
+            mensaje: inputTexto.value,
             hora: hora + ":" + minutos,
             fecha: dia + "/" + mes + "/" + ano,
             apiKey: respuesta[0].apiKey
         }
 
         const cadenaJSON = JSON.stringify(mensajeSend);
-        console.log(cadenaJSON);
 
 
         xhr.onreadystatechange = function () {
